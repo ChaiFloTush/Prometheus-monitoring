@@ -1,5 +1,5 @@
 [Unit]
-Description=Prometheus Metrics Server {% if deployment_method == 'container' %} (Containerized)
+Description=Prometheus Metrics Server {% if deployment_menthod == 'container' %} (Containerized)
 After=docker.service
 Requires=docker.service
 {% else %}
@@ -8,7 +8,7 @@ After=network.target
 
 [Service]
 Type=simple
-{% if deployment_method == 'container' %} 
+{% if deployment_menthod == 'container' %} 
 ExecStart=/usr/bin/docker run --name prometheus_server_container -p 8080:8080 prometheus_server
 ExecStop=/usr/bin/docker stop prometheus_server
 ExecStioPost=/usr/bin/docker rm prometheus_server

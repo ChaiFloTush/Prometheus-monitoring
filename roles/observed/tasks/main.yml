@@ -3,11 +3,11 @@
 #    name: prometheus-client
 #    state: latest
 
-- name: Copy server script
-  copy:
-   src: files/prometheus_server.py
-   dest: /opt/prometheus_server.py
-   mode: 0644
+# - name: Copy server script
+#   copy:
+#    src: files/prometheus_server.py
+#    dest: /opt/zhirk/prometheus_server.py
+#    mode: 0644
 
 # - name: Create service
 #   template:

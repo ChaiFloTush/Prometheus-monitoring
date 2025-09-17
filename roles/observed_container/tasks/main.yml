@@ -1,20 +1,20 @@
 - name: Copy Dockerfile
   copy:
    src: files/Dockerfile
-   dest: /opt/container/Dockerfile
+   dest: /opt/zhirk/Dockerfile
    mode: 0644
 
-- name: Copy server script
-  copy:
-   src: ../observed/files/prometheus_server.py
-   dest: /opt/container/prometheus_server.py
-   mode: 0644
+# - name: Copy server script
+#   copy:
+#    src: ../observed/files/prometheus_server.py
+#    dest: /opt/zhirk/prometheus_server.py
+#    mode: 0644
 ######################################
 - name: Build Docker image
   docker_image:
-   name: prometheus_container_server
+   name: prometheus_server_container
    build:
-    path: /opt/container
+    path: /opt/zhirk
     dockerfile: Dockerfile
    source: build
    state: present
