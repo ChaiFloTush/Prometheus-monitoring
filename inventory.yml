@@ -1,0 +1,5 @@
+all:
+ hosts:
+  observed_servers:
+   ansible_host: 10.0.2.15
+   ansible_user: root
