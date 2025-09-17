@@ -2,7 +2,41 @@
 - name: Apply configuration
   hosts: observed_servers 
   become: yes
+  vars:
+   deployment_method: "native"
+
   tasks:
    - name: Include observed role
      include_role:
       name: observed
+     when: deployment_method == "native"
+   
+   - name: Include container role
+     include_role:
+      name: observed_container
+     when: deployment_method == "container"
+
+    # - name: Ensure firewall allows port 8080
+    #   ufw:
+    #    port: 8080
+    #    state: enabled
+    #    proto: tcp
+
+   - name: Install prometheus-client
+     pip:
+      name: prometheus-client
+      state: latest
+
+   - name: Create service
+     template:
+      src: roles/observed/templates/prometheus_server_service.j2
+      dest: /etc/systemd/system/prometheus_server.service
+      mode: 0644
+
+   - name: Enable and start service
+     systemd:
+      name: prometheus_server
+      enabled: yes
+      state: started
+      daemon_reload: yes 
+     

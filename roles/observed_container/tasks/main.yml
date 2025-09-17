@@ -1,0 +1,20 @@
+- name: Copy Dockerfile
+  copy:
+   src: files/Dockerfile
+   dest: /opt/container/Dockerfile
+   mode: 0644
+
+- name: Copy server script
+  copy:
+   src: ../observed/files/prometheus_server.py
+   dest: /opt/container/prometheus_server.py
+   mode: 0644
+######################################
+- name: Build Docker image
+  docker_image:
+   name: prometheus_container_server
+   build:
+    path: /opt/container
+    dockerfile: Dockerfile
+   source: build
+   state: present
