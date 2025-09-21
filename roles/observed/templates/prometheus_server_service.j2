@@ -9,9 +9,9 @@ After=network.target
 [Service]
 Type=simple
 {% if deployment_method == 'container' %} 
-ExecStart=/usr/bin/docker run --name prometheus_server_container -p 8080:8080 prometheus_server
-ExecStop=/usr/bin/docker stop prometheus_server
-ExecStioPost=/usr/bin/docker rm prometheus_server
+ExecStart=/usr/bin/docker run --name prometheus_server_container -p 8080:8080 prometheus_server_container
+ExecStop=/usr/bin/docker stop prometheus_server_container
+ExecStopPost=/usr/bin/docker rm prometheus_server_container
 {% else %}
 User=root
 ExecStart=/usr/bin/python3 /opt/prometheus_server.py

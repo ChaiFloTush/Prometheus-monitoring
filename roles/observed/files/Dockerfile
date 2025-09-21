@@ -4,8 +4,8 @@ WORKDIR /app
 
 RUN pip install prometheus-client
 
-COPY prometheus_servver.py
+COPY prometheus_server.py .
 
 EXPOSE 8080
 
-CMD ["python", "prometheus_servver.py"]
+CMD ["python", "prometheus_server.py"]

@@ -1,4 +1,3 @@
-# import http.server
 import prometheus_client
 import os
 import subprocess
@@ -35,17 +34,8 @@ def detect_host_type():
 host_type = detect_host_type()
 HOST_TYPE.labels(type=host_type).set(1)
 
-# REQUEST_COUNT = prometheus_client.Counter('http_requests_total', 'Total HTTP Requests')
 
-# class MetricsHandler(prometheus_client.MetricsHandler):
-#     def do_GET(self):
-#         REQUEST_COUNT.inc()
-#         return super().do_GET()
-    
 if __name__ == '__main__':
-    # server = http.server.HTTPServer(('', 8080), MetricsHandler)
-    # server.serve_forever()
-
     prometheus_client.start_http_server(8080)
     while True:
         time.sleep(1)
