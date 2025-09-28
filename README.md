@@ -9,12 +9,12 @@ all:
     ansible_host: [ip-адрес виртуальной машины]
     ansible_user: [имя пользователя]
 5. Убедиться, что на основной машине прикрепленные файлы расположены следующим образом:
-- [инвентарь]
-- main.yml
-- roles/observed/tasks/main.yml
-- roles/observed/files/Dockerfile
-- roles/observed/files/prometheus_server.py
-- roles/observed/templates/prometheus_server_service.j2
+   - [инвентарь]
+   - main.yml
+   - roles/observed/tasks/main.yml
+   - roles/observed/files/Dockerfile
+   - roles/observed/files/prometheus_server.py
+   - roles/observed/templates/prometheus_server_service.j2
 6. **(Для раскатки не через контейнер)** ввести команду: `ansible-playbook -i [путь к инвентарю] --private-key [путь к ssh-ключу] main.yml` 
 *(Если в конфиг-файле обозначены инвентарь и ssh-ключ, прописывать их в команде не нужно, и достаточно `ansible-playbook main.yml`)*
 
