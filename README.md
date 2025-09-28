@@ -15,16 +15,16 @@ all:
    - roles/observed/files/Dockerfile
    - roles/observed/files/prometheus_server.py
    - roles/observed/templates/prometheus_server_service.j2
-6. **(Для раскатки не через контейнер)** ввести команду: `ansible-playbook -i [путь к инвентарю] --private-key [путь к ssh-ключу] main.yml` 
+6. **(Для раскатки не через контейнер)** ввести команду: `ansible-playbook -i [путь к инвентарю] --private-key [путь к ssh-ключу] main.yml`  
 *(Если в конфиг-файле обозначены инвентарь и ssh-ключ, прописывать их в команде не нужно, и достаточно `ansible-playbook main.yml`)*
 
 # Чтобы собрать docker-образ:
 Docker-образ собирается автоматически при запуске ansible-плейбука, для этого необходимо ввести команду: 
-`ansible-playbook -i [путь к инвентарю] --private-key [путь к ssh-ключу] --extra-vars "deployment_method=container" main.yml` 
+`ansible-playbook -i [путь к инвентарю] --private-key [путь к ssh-ключу] --extra-vars "deployment_method=container" main.yml`  
 *(Также перед выполнением данной команды необходимо убедиться, что установлен Docker)*
 
 # Чтобы создать виртуальную машину:
-1. Ввести недостающие значения переменных в vars.tfvars, variables.tf и заменить прописанные пути к ssh-ключу в main.tf
-2. Запустить terraform с помощью команды `terraform apply -var-file vars.tfvars`
+1. Ввести недостающие значения переменных в vars.tfvars, variables.tf и заменить прописанные пути к ssh-ключу в main.tf  
+2. Запустить terraform с помощью команды `terraform apply -var-file vars.tfvars`  
 *(В данном случае генерацию и проброс ssh-ключей, а также проверку зависимостей из предыдущих разделов можно опустить)*
 
