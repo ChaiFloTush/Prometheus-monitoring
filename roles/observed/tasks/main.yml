@@ -1,66 +1,92 @@
 - name: Install prometheus-client
   pip:
-   name: prometheus-client
-   state: latest
+    name: prometheus-client
+    state: present
+  when: deployment_method != "container"
 
-- name: Copy server script
+- name: Copy prometheus server script
   copy:
-   src: files/prometheus_server.py
-   dest: /opt/zhirk/prometheus_server.py
-   mode: 0644
+    src: files/prometheus_server.py
+    dest: /opt/prometheus_server.py
+    mode: 0644
 
-- name: Copy Dockerfile
-  copy:
-   src: files/Dockerfile
-   dest: /opt/zhirk/Dockerfile
-   mode: 0644
-  when: deployment_method == "container"
 
-- name: Ensure Docker is running
+
+- name: Install firewalld
+  dnf: 
+    name: firewalld
+    state: present
+
+- name: Start firewalld service
   systemd:
-   name: docker
-   state: started
-  when: deployment_method == "container"
+    name: firewalld
+    state: started
+    enabled: yes
 
-- name: Check if Docker image exists
-  command: docker images -q prometheus_server_container
-  register: image_exists
+- name: Check if port 8080 is already open
+  command: firewall-cmd --list-ports 
+  register: firewall_ports
   changed_when: false
-  ignore_errors: true
+
+- name: Make firewall allow port 8080
+  command: firewall-cmd --add-port=8080/tcp 
+  when: "'8080/tcp' not in firewall_ports.stdout"
+
+
+
+- name: Bonus task 1
+  block:
+    - name: Copy Dockerfile 
+      copy:
+        src: files/Dockerfile
+        dest: /opt/Dockerfile
+        mode: 0644
+
+    - name: Ensure Docker is running 
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Check if Docker image already exists 
+      command: docker images -q prometheus_server_container
+      register: image_exists
+      changed_when: false
+      ignore_errors: true
+
+    - name: Build Docker image 
+      command: docker build -t prometheus_server_container -f /opt/Dockerfile /opt
+      register: built_result
+      changed_when: built_result.rc == 0
+      when: image_exists.stdout == ""
   when: deployment_method == "container"
 
-# docker_image:
-  #  name: prometheus_server_container
-  #  build:
-  #   path: /opt/zhirk
-  #   dockerfile: Dockerfile
-  #  source: build
-  #  state: present
-  # when: deployment_method == "container"
-- name: Build Docker image
-  command:
-   cmd: docker build -t prometheus_server_container -f /opt/zhirk/Dockerfile /opt/zhirk
-  register: built_result
-  # changed_when: "Successfully built' in built_result.stdout or 'Successfully tagged' in build_result.stdout"
-  changed_when: built_result.rc == 0
-  when: deployment_method == "container" and (image_exists.rc != 0 or image_exists.stdout == "")
 
 
-- name: Create service
-  template:
-   src: prometheus_server_service.j2
-   dest: /etc/systemd/system/prometheus_server.service
-   mode: 0644
-
-# - name: Ensure firewall allows port 8080
-#   ufw:
-#    port: 8080
-#    state: enabled
-#    proto: tcp
-
-- name: Enable and start service
+- name: Check if prometheus server service exists
   systemd:
-   name: prometheus_server
-   enabled: yes
-   state: started
-   daemon_reload: yes 
+    name: prometheus_server
+  register: prometheus_service_status
+  changed_when: false
+
+- name: Stop running prometheus server service
+  systemd:
+    name: prometheus_server
+    enabled: no
+    state: stopped
+    daemon_reload: yes
+  when: prometheus_service_status.status.ActiveState == 'active'
+
+- name: Create prometheus server service
+  template:
+    src: prometheus_server_service.j2
+    dest: /etc/systemd/system/prometheus_server.service
+    mode: 0644
+
+- name: Enable and start prometheus server service
+  systemd:
+    name: prometheus_server
+    enabled: yes
+    state: started
+    daemon_reload: yes 
+

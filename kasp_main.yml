@@ -1,0 +1,14 @@
+---
+- name: Apply configuration
+  hosts: all 
+  become: yes
+
+  tasks:
+    - name: Include observed role 
+      include_role:
+        name: observed
+  
+  vars:
+    deployment_method: "native"
+
+ 
